@@ -16,7 +16,7 @@ VCL and and CrossVCL WebBrowser component based on native web arch on each platf
 
 # Requirements
 
-Windows version works with Delphi version testes on Delphi Tokyo. MacOS and Linux version requires CrossVcl from http://www.crossvcl.com
+Windows version works with Delphi version tested on Delphi Tokyo. MacOS and Linux version requires CrossVcl from http://www.crossvcl.com
 
 # License
 

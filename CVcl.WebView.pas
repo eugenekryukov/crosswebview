@@ -101,6 +101,7 @@ type
     property OnEndDrag;
     property OnEnter;
     property OnExit;
+    property OnFinishLoading;
     property OnGetSiteInfo;
     property OnMouseDown;
     property OnMouseMove;

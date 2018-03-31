@@ -3,8 +3,8 @@ object Form51: TForm51
   Top = 0
   ActiveControl = URLEdit
   Caption = 'CrossVCL Mini Browser'
-  ClientHeight = 501
-  ClientWidth = 748
+  ClientHeight = 573
+  ClientWidth = 884
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,24 +12,23 @@ object Form51: TForm51
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 748
+    Width = 884
     Height = 47
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      748
+      884
       47)
     object URLEdit: TEdit
       Left = 104
       Top = 14
-      Width = 549
+      Width = 685
       Height = 26
       Anchors = [akLeft, akTop, akRight]
       Font.Charset = DEFAULT_CHARSET
@@ -39,10 +38,10 @@ object Form51: TForm51
       Font.Style = []
       ParentFont = False
       TabOrder = 0
-      Text = 'https://www.google.com'
+      Text = 'https://www.ksdev.com'
     end
     object Go: TButton
-      Left = 665
+      Left = 801
       Top = 14
       Width = 75
       Height = 26
@@ -87,5 +86,30 @@ object Form51: TForm51
       TabOrder = 3
       OnClick = ForwButtonClick
     end
+  end
+  object WebView1: TWebView
+    Left = 0
+    Top = 47
+    Width = 884
+    Height = 507
+    Align = alClient
+    UseDockManager = False
+    ParentBackground = False
+    OnFinishLoading = WebView1FinishLoading
+    ExplicitLeft = 240
+    ExplicitTop = 182
+    ExplicitWidth = 455
+    ExplicitHeight = 273
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 554
+    Width = 884
+    Height = 19
+    Panels = <>
+    SimplePanel = True
+    ExplicitLeft = 450
+    ExplicitTop = 298
+    ExplicitWidth = 0
   end
 end

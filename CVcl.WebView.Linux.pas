@@ -87,7 +87,6 @@ procedure gtk_widget_show(widget: PGtkWidget); cdecl; external GtkLib;
 procedure gtk_widget_set_size_request(widget: PGtkWidget; width: Integer; height: Integer); cdecl; external GtkLib;
 procedure gtk_container_add(container: Pointer; widget: PGtkWidget); cdecl; external GtkLib;
 function gtk_scrolled_window_new(hadjustment, vadjustment: Pointer): Pointer; cdecl; external GtkLib;
-procedure gtk_fixed_put(fixed: Pointer; widget: Pointer; x: Integer; y: Integer); cdecl; external GtkLib;
 
 { Callbacks }
 
@@ -136,7 +135,7 @@ begin
     gtk_container_add(FScroll, FWebView);
 
     // Add Scroll to Parent
-    gtk_fixed_put(Fixed, FScroll, 0, 0);
+    SetNativeParent(FScroll, FParentWnd);
 
     WebViewUpdateBounds;
   end;

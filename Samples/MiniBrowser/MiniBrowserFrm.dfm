@@ -96,10 +96,10 @@ object Form51: TForm51
     UseDockManager = False
     ParentBackground = False
     OnFinishLoading = WebView1FinishLoading
-    ExplicitLeft = 240
-    ExplicitTop = 182
-    ExplicitWidth = 455
-    ExplicitHeight = 273
+    ExplicitLeft = 74
+    ExplicitTop = 142
+    ExplicitWidth = 810
+    ExplicitHeight = 412
   end
   object StatusBar1: TStatusBar
     Left = 0
@@ -108,8 +108,5 @@ object Form51: TForm51
     Height = 19
     Panels = <>
     SimplePanel = True
-    ExplicitLeft = 450
-    ExplicitTop = 298
-    ExplicitWidth = 0
   end
 end

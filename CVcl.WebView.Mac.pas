@@ -99,7 +99,8 @@ begin
   if GetNativeHandles(FParentWnd, WindowPtr, ContentViewPtr) then
   begin
     ContentView := TNSView.Wrap(ContentViewPtr);
-    ContentView.addSubview(FWebView);
+
+    SetNativeParent((FWebView as ILocalObject).GetObjectID, FParentWnd);
 
     FWebView.setFrame(ContentView.bounds);
     FWebView.setAutoresizingMask(NSViewWidthSizable or NSViewHeightSizable);

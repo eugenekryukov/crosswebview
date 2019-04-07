@@ -18,6 +18,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes, Vcl.Controls;
 
+const
+
+  DefaultMime = 'text/html';
+
 type
 
   EWebView = class(Exception);
@@ -31,6 +35,10 @@ type
     ['{09342BAC-1400-4FD3-BF26-E6D9EABEB128}']
     procedure WebViewUpdateBounds;
     procedure WebViewNavigate(const URL: string);
+    procedure WebViewLoadFromStream(const AStream: TStream; const MimeType, BaseUrl: string);
+    procedure WebViewLoadFromString(const AString: string; const BaseUrl: string);
+    function WebViewRunScript(const AScript: string; var ResultStr, ErrorStr: string): Boolean;
+    function WebViewGetSelectedText: string;
     procedure WebViewGoForward;
     procedure WebViewGoBack;
     function WebGetHandle: Pointer;
@@ -55,8 +63,12 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Navigate(const URL: string);
+    procedure LoadFromStream(const AStream: TStream; const MimeType: string = DefaultMime; const BaseUrl: string = '');
+    procedure LoadFromString(const AString: string; const BaseUrl: string = '');
+    function RunScript(const AScript: string): string;
     procedure GoForward;
     procedure GoBack;
+    function GetSelectedText: string;
     // Handle to native WebView object
     //   TWebBrowser control on Windows
     //   WKWebView view on macOS
@@ -196,6 +208,16 @@ begin
   FWebView.WebViewGoForward;
 end;
 
+procedure TCustomWebView.LoadFromStream(const AStream: TStream; const MimeType: string = DefaultMime; const BaseUrl: string = '');
+begin
+  FWebView.WebViewLoadFromStream(AStream, MimeType, BaseUrl);
+end;
+
+procedure TCustomWebView.LoadFromString(const AString: string; const BaseUrl: string = '');
+begin
+  FWebView.WebViewLoadFromString(AString, BaseUrl);
+end;
+
 procedure TCustomWebView.Navigate(const URL: string);
 begin
   FWebView.WebViewNavigate(URL);
@@ -206,6 +228,19 @@ begin
   inherited;
   if FWebView <> nil then
     FWebView.WebViewUpdateBounds;
+end;
+
+function TCustomWebView.RunScript(const AScript: string): string;
+var
+  Error: string;
+begin
+  if not FWebView.WebViewRunScript(AScript, Result, Error) then
+    raise EWebView.Create('Error evaluating JS: ' + Error);
+end;
+
+function TCustomWebView.GetSelectedText: string;
+begin
+  Result := FWebView.WebViewGetSelectedText;
 end;
 
 procedure TCustomWebView.WMEraseBkgnd(var Message: TWmEraseBkgnd);

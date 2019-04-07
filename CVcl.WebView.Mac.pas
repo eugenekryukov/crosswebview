@@ -50,6 +50,10 @@ type
     { IWebView }
     procedure WebViewUpdateBounds;
     procedure WebViewNavigate(const URL: string);
+    procedure WebViewLoadFromStream(const AStream: TStream; const MimeType, BaseUrl: string);
+    procedure WebViewLoadFromString(const AString: string; const BaseUrl: string);
+    function WebViewRunScript(const AScript: string; var ResultStr, ErrorStr: string): Boolean;
+    function WebViewGetSelectedText: string;
     procedure WebViewGoForward;
     procedure WebViewGoBack;
     function WebGetHandle: Pointer;
@@ -118,6 +122,13 @@ begin
   Result := FWebView;
 end;
 
+function TMacWebView.WebViewGetSelectedText: string;
+var
+  Error: string;
+begin
+  WebViewRunScript('window.getSelection().toString()', Result, Error);
+end;
+
 procedure TMacWebView.WebViewGoBack;
 begin
   FWebView.goBack;
@@ -128,6 +139,26 @@ begin
   FWebView.goForward;
 end;
 
+procedure TMacWebView.WebViewLoadFromStream(const AStream: TStream; const MimeType, BaseUrl: string);
+var
+  Memory: TMemoryStream;
+  Data: NSData;
+begin
+  Memory := TMemoryStream.Create;
+  try
+    Memory.CopyFrom(AStream, AStream.Size);
+    Data := TNSData.Wrap(TNSData.OCClass.dataWithBytes(Memory.Memory, Memory.Size));
+    FWebView.mainFrame.loadData(Data, NSStr(MimeType), nil, StrToNSUrl(BaseUrl));
+  finally
+    Memory.Free;
+  end;
+end;
+
+procedure TMacWebView.WebViewLoadFromString(const AString: string; const BaseUrl: string);
+begin
+  FWebView.mainFrame.loadHTMLString(NSStr(AString), StrToNSUrl(BaseUrl));
+end;
+
 procedure TMacWebView.WebViewNavigate(const URL: string);
 var
   URLRequest: NSURLRequest;
@@ -136,6 +167,16 @@ begin
   URLStr := TNSUrl.Wrap(TNSUrl.OCClass.URLWithString(StrToNSStr(URL)));
   URLRequest := TNSURLRequest.Wrap(TNSURLRequest.OCClass.requestWithURL(URLStr));
   FWebView.mainFrame.loadRequest(URLRequest);
+end;
+
+function TMacWebView.WebViewRunScript(const AScript: string; var ResultStr,
+  ErrorStr: string): Boolean;
+var
+  LJavaScript: NSString;
+begin
+  LJavaScript := StrToNSStr(AScript);
+  ResultStr := NSStrToStr(FWebView.stringByEvaluatingJavaScriptFromString(LJavaScript));
+  Result := ResultStr <> '';
 end;
 
 procedure TMacWebView.WebViewUpdateBounds;

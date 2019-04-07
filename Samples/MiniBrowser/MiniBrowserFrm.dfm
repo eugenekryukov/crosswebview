@@ -28,7 +28,7 @@ object Form51: TForm51
     object URLEdit: TEdit
       Left = 104
       Top = 14
-      Width = 685
+      Width = 521
       Height = 26
       Anchors = [akLeft, akTop, akRight]
       Font.Charset = DEFAULT_CHARSET
@@ -41,10 +41,10 @@ object Form51: TForm51
       Text = 'https://www.ksdev.com'
     end
     object Go: TButton
-      Left = 801
+      Left = 635
       Top = 14
       Width = 75
-      Height = 26
+      Height = 27
       Anchors = [akTop, akRight]
       Caption = 'Go'
       Font.Charset = DEFAULT_CHARSET
@@ -75,7 +75,7 @@ object Form51: TForm51
       Left = 55
       Top = 14
       Width = 38
-      Height = 26
+      Height = 27
       Caption = '>'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -85,6 +85,21 @@ object Form51: TForm51
       ParentFont = False
       TabOrder = 3
       OnClick = ForwButtonClick
+    end
+    object Button1: TButton
+      Left = 724
+      Top = 14
+      Width = 147
+      Height = 27
+      Caption = 'Load From File...'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 4
+      OnClick = Button1Click
     end
   end
   object WebView1: TWebView
@@ -96,10 +111,6 @@ object Form51: TForm51
     UseDockManager = False
     ParentBackground = False
     OnFinishLoading = WebView1FinishLoading
-    ExplicitLeft = 74
-    ExplicitTop = 142
-    ExplicitWidth = 810
-    ExplicitHeight = 412
   end
   object StatusBar1: TStatusBar
     Left = 0
@@ -108,5 +119,9 @@ object Form51: TForm51
     Height = 19
     Panels = <>
     SimplePanel = True
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 436
+    Top = 292
   end
 end

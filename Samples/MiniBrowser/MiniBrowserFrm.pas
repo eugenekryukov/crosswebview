@@ -15,10 +15,13 @@ type
     ForwButton: TButton;
     WebView1: TWebView;
     StatusBar1: TStatusBar;
+    Button1: TButton;
+    OpenDialog1: TOpenDialog;
     procedure GoClick(Sender: TObject);
     procedure BackButtonClick(Sender: TObject);
     procedure ForwButtonClick(Sender: TObject);
     procedure WebView1FinishLoading(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -35,6 +38,12 @@ implementation
 procedure TForm51.BackButtonClick(Sender: TObject);
 begin
   WebView1.GoBack;
+end;
+
+procedure TForm51.Button1Click(Sender: TObject);
+begin
+  if OpenDialog1.Execute then
+    WebView1.Navigate('file://' + OpenDialog1.FileName);
 end;
 
 procedure TForm51.ForwButtonClick(Sender: TObject);

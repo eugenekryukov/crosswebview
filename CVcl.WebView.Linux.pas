@@ -51,6 +51,14 @@ type
 
 implementation
 
+type
+  PGError = ^TGError;
+  TGError = packed record
+    domain: Cardinal;
+    code: Integer;
+    msg: PAnsiChar;
+  end;
+
 var
   Lib: NativeInt;
   webkit_web_view_new: function : PWebKitWebView; cdecl;
@@ -74,6 +82,16 @@ var
   JSStringGetLength: function (str: Pointer): LongWord; cdecl;
   JSStringGetCharactersPtr: function (&string: Pointer): PChar; cdecl;
   JSStringRelease: procedure (&string: Pointer); cdecl;
+  g_bytes_new: function (data: Pointer; size: NativeUInt): Pointer; cdecl;
+  g_bytes_unref: procedure (bytes: Pointer); cdecl;
+  g_bytes_get_size: function (bytes: Pointer): NativeUInt; cdecl;
+  g_signal_connect_data: function (instance: Pointer; detailed_signal: PUtf8Char; c_handler: Pointer; data: Pointer;
+    destroy_data: Pointer; connect_flags: Integer): NativeUInt; cdecl;
+  gtk_widget_destroy: procedure (widget: PGtkWidget); cdecl;
+  gtk_widget_show: procedure (widget: PGtkWidget); cdecl;
+  gtk_widget_set_size_request: procedure (widget: PGtkWidget; width: Integer; height: Integer); cdecl;
+  gtk_container_add: procedure (container: Pointer; widget: PGtkWidget); cdecl;
+  gtk_scrolled_window_new: function (hadjustment, vadjustment: Pointer): Pointer; cdecl;
 
 function LoadWebKit: Boolean;
 begin
@@ -108,35 +126,35 @@ begin
       JSStringGetCharactersPtr := GetProcAddress(Lib, 'JSStringGetCharactersPtr');
       JSStringRelease := GetProcAddress(Lib, 'JSStringRelease');
     end;
+
+    Lib := LoadLibrary('libglib-2.0.so.0');
+    Result := Lib <> 0;
+    if Result then
+    begin
+      g_bytes_new := GetProcAddress(Lib, 'g_bytes_new');
+      g_bytes_unref := GetProcAddress(Lib, 'g_bytes_unref');
+      g_bytes_get_size := GetProcAddress(Lib, 'g_bytes_get_size');
+    end;
+
+    Lib := LoadLibrary('libgobject-2.0.so.0');
+    Result := Lib <> 0;
+    if Result then
+    begin
+      g_signal_connect_data := GetProcAddress(Lib, 'g_signal_connect_data');
+    end;
+
+    Lib := LoadLibrary('libgtk-3.so.0');
+    Result := Lib <> 0;
+    if Result then
+    begin
+      gtk_widget_destroy := GetProcAddress(Lib, 'gtk_widget_destroy');
+      gtk_widget_show := GetProcAddress(Lib, 'gtk_widget_show');
+      gtk_widget_set_size_request := GetProcAddress(Lib, 'gtk_widget_set_size_request');
+      gtk_container_add := GetProcAddress(Lib, 'gtk_container_add');
+      gtk_scrolled_window_new := GetProcAddress(Lib, 'gtk_scrolled_window_new');
+    end;
   end;
 end;
-
-const
-  GtkLib = 'libgtk-3.so.0';
-  GLib2 = 'libglib-2.0.so.0';
-  GObjectLib = 'libgobject-2.0.so.0';
-
-type
-  PGError = ^TGError;
-  TGError = packed record
-    domain: Cardinal;
-    code: Integer;
-    msg: PAnsiChar;
-  end;
-
-
-function g_bytes_new(data: Pointer; size: NativeUInt): Pointer; cdecl; external GLib2;
-procedure g_bytes_unref(bytes: Pointer); cdecl; external GLib2;
-function g_bytes_get_size(bytes: Pointer): NativeUInt; cdecl; external GLib2;
-
-function g_signal_connect_data(instance: Pointer; detailed_signal: PUtf8Char; c_handler: Pointer; data: Pointer;
-  destroy_data: Pointer; connect_flags: Integer): NativeUInt; cdecl; external GObjectLib;
-
-procedure gtk_widget_destroy(widget: PGtkWidget); cdecl; external GtkLib;
-procedure gtk_widget_show(widget: PGtkWidget); cdecl; external GtkLib;
-procedure gtk_widget_set_size_request(widget: PGtkWidget; width: Integer; height: Integer); cdecl; external GtkLib;
-procedure gtk_container_add(container: Pointer; widget: PGtkWidget); cdecl; external GtkLib;
-function gtk_scrolled_window_new(hadjustment, vadjustment: Pointer): Pointer; cdecl; external GtkLib;
 
 { Callbacks }
 

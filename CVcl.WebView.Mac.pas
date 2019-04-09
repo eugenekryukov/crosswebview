@@ -1,5 +1,5 @@
 {
-  This file is part of CrossVCL WebBroser 
+  This file is part of CrossVCL WebBroser
   Copyright (c) 2018 Eugene Kryukov
 
   The contents of this file are subject to the Mozilla Public License Version 2.0 (the "License");
@@ -16,8 +16,8 @@ unit CVcl.WebView.Mac;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.Classes, CVcl.WebView, Macapi.ObjectiveC, Macapi.Helpers, Macapi.Foundation,
-  Macapi.AppKit, Macapi.WebKit;
+  Winapi.Windows, Winapi.Messages, System.Classes, CVcl.WebView, Macapi.ObjCRuntime, Macapi.ObjectiveC,
+  Macapi.Helpers, Macapi.Foundation, Macapi.AppKit, Macapi.WebKit;
 
 type
 
@@ -84,6 +84,24 @@ begin
   FDelegate.FinishLoading;
 end;
 
+function maintainsInactiveSelection(self: Pointer; _cmd: SEL): Boolean; cdecl;
+begin
+  Result := True;
+end;
+
+procedure ReplaceMethods(WebView: Pointer);
+var
+  FrameClass: Pointer;
+  M1, M2: Pointer;
+begin
+  // Replace drawRect method on window frame
+  FrameClass := object_getClass(WebView);
+  class_addMethod(FrameClass, sel_getUid('maintainsInactiveSelectionOriginal'), @maintainsInactiveSelection, 'v@');
+  M1 := class_getInstanceMethod(FrameClass, sel_getUid('maintainsInactiveSelection'));
+  M2 := class_getInstanceMethod(FrameClass, sel_getUid('maintainsInactiveSelectionOriginal'));
+  method_exchangeImplementations(M1, M2);
+end;
+
 { TMacWebView }
 
 constructor TMacWebView.Create(AParentWnd: HWnd; ADelegate: IWebViewDelegate);
@@ -96,6 +114,7 @@ begin
   FParentWnd := AParentWnd;
 
   FWebView := TWebView.Create;
+  ReplaceMethods((FWebView as ILocalObject).GetObjectID);
 
   FCocoaDelegate := TCocoaDelegate.Create(FDelegate);
   FWebView.setFrameLoadDelegate(FCocoaDelegate.GetObjectID);
